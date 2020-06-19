@@ -19,6 +19,7 @@
 package org.apache.tajo.engine.planner.physical;
 
 import io.netty.util.internal.PlatformDependent;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.tajo.SessionVars;
