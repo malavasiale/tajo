@@ -6,8 +6,9 @@ addons:
   sonarcloud:
     organization: "malavasiale"
     token: "b04127c78afa9879cb3c6803226cc88b4feacba0"
-
+install:
+   - mvn clean install -Drat.skip=true
 script:
   # the following command line builds the project, runs the tests with coverage and then execute the SonarCloud analysis
-   - mvn clean package sonar:sonar -Dsonar.projectKey=malavasiale_tajo
+   - mvn package sonar:sonar -Dsonar.projectKey=malavasiale_tajo
 
