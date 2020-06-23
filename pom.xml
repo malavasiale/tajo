@@ -102,6 +102,21 @@
     <module>tajo-dist</module>
     <module>jacoco-reports</module>
   </modules>
+    
+    <dependencies>
+		<dependency>
+  			<groupId>junit</groupId>
+  			<artifactId>junit</artifactId>
+  			<version>4.13</version>
+		</dependency>
+		<dependency>
+			<groupId>pl.pragmatists</groupId>
+			<artifactId>JUnitParams</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+<!-- Thanks for using https://jar-download.com -->
+
+	</dependencies>
 
   <build>
     <pluginManagement>
@@ -341,15 +356,6 @@
     </plugins>
   </build>
   
-      <dependencyManagement>
-	<dependencies>
-		<dependency>
-  			<groupId>junit</groupId>
-  			<artifactId>junit</artifactId>
-  			<version>4.13</version>
-		</dependency>
-	</dependencies>
-    </dependencyManagement>
 
   <profiles>
     <!-- User Documentation -->
