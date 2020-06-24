@@ -112,6 +112,10 @@ public class TaskComparatorTest {
 		assertEquals(3,toOrder.get(0).getId().getId());
 		
 		Collections.shuffle(toOrder);
+		JSPUtil.sortTasks(toOrder, "invalid", "desc");
+		assertEquals(3,toOrder.get(0).getId().getId());
+		
+		Collections.shuffle(toOrder);
 		JSPUtil.sortTasks(toOrder, "invalid", "asc");
 		assertEquals(1,toOrder.get(0).getId().getId());
 	}
@@ -143,6 +147,22 @@ public class TaskComparatorTest {
 		JSPUtil.sortTasks(toOrder, "runTime", order);
 		assertEquals(expected,toOrder.get(0).getId().getId());
 		
+	}
+	
+	@Test
+	//tasks = valid ; order = desc ; field = runTime FOR COVERAGE
+	//tasks = valid ; order = desc ; field = runTime FOR COVERAGE
+	public void sortTaskNullRunTime() {
+		toOrder.add(createTask(2,0,2));
+		toOrder.add(createTask(1,1,2));
+		JSPUtil.sortTasks(toOrder, "runTime", "desc");
+		assertEquals(1,toOrder.get(0).getId().getId());
+		
+		toOrder.clear();
+		toOrder.add(createTask(1,0,2));
+		toOrder.add(createTask(2,1,2));
+		JSPUtil.sortTasks(toOrder, "runTime", "desc");
+		assertEquals(2,toOrder.get(0).getId().getId());
 	}
 	
 	@Test
