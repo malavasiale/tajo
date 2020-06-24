@@ -10,12 +10,15 @@ import java.util.List;
 import org.apache.tajo.ExecutionBlockId;
 import org.apache.tajo.TaskId;
 import org.apache.tajo.conf.TajoConf;
+import org.apache.tajo.master.cluster.WorkerConnectionInfo;
 import org.apache.tajo.master.event.TaskAttemptToSchedulerEvent;
 import org.apache.tajo.util.JSPUtil;
 import org.apache.tajo.util.TajoIdUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mockito;
+import org.mockito.Spy;
 
 import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
@@ -49,7 +52,6 @@ public class TaskComparatorTest {
 	    
 	    task.setLaunchTime(launchTime);
         task.setFinishTime(finishTime);
-        
         return task;
 	}
 	
@@ -133,6 +135,40 @@ public class TaskComparatorTest {
 		
 		JSPUtil.sortTasks(toOrder, "host", "desc");
 		assertEquals(2,toOrder.get(0).getId().getId());
+	}
+	
+	
+	
+	/*
+	 * In  questo test viene eseguito un mock sull assegnazione degli host ai vari task per testare
+	 * la funzionalità di TaskComparator quando gli host sono diversi dal valore null
+	 * */
+	@Test
+	//tasks = valid ; order = desc ; field = host FOR COVERAGE
+	//tasks = valid ; order = asc ; field = host FOR COVERAGE
+	public void sortTaskHostMocked() {
+		Task task1 = createTask(1,1,2);
+		Task task2 = createTask(2,1,2);
+		task1 = Mockito.spy(task1);
+		task2 = Mockito.spy(task2);
+		WorkerConnectionInfo conn1 = Mockito.mock(WorkerConnectionInfo.class);
+		WorkerConnectionInfo conn2 = Mockito.mock(WorkerConnectionInfo.class);
+		
+		Mockito.doReturn(conn1).when(task1).getSucceededWorker();
+		Mockito.doReturn(conn2).when(task2).getSucceededWorker();
+		
+
+		Mockito.doReturn("hostA").when(conn1).getHost();
+		Mockito.doReturn("hostB").when(conn2).getHost();
+		
+		toOrder.add(task1);
+		toOrder.add(task2);
+		JSPUtil.sortTasks(toOrder, "host", "desc");
+		assertEquals(2,toOrder.get(0).getId().getId());
+		
+		JSPUtil.sortTasks(toOrder, "host", "asc");
+		assertEquals(1,toOrder.get(0).getId().getId());
+		
 	}
 	
 	@Test
