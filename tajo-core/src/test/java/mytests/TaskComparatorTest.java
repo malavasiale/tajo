@@ -124,6 +124,20 @@ public class TaskComparatorTest {
 		assertEquals(2,toOrder.get(0).getId().getId());
 	}
 	
+	@Test
+	@Parameters({
+		"2,5,1,desc,2", //tasks = valid ; order = desc ; field = runTime
+		"2,5,1,asc,3" //tasks = valid ; order = desc ; field = runTime
+	})
+	public void sortTaskRunTimeTest(int runTime1,int runTime2, int runTime3,String order,int expected) {
+		toOrder.add(createTask(1,1,1+runTime1));
+		toOrder.add(createTask(2,1,1+runTime2));
+		toOrder.add(createTask(3,1,1+runTime3));
+		JSPUtil.sortTasks(toOrder, "runTime", order);
+		assertEquals(expected,toOrder.get(0).getId().getId());
+		
+	}
+	
 	
 	
 	/*---------END TEST SORT TASK----------*/
