@@ -97,6 +97,8 @@ public class TaskComparatorTest {
 	@Test
 	//tasks = valid ; order = asc ; field = empty
 	// tasks = valid ; order = desc ; field = null
+	// tasks = valid ; order = desc ; field = invalid
+	// tasks = valid ; order = asc ; field = invalid FOR COVERAGE
 	public void sortTaskInvalidField() {
 		toOrder.add(createTask(1,1,2));
 		toOrder.add(createTask(3,2,3));
@@ -107,6 +109,10 @@ public class TaskComparatorTest {
 		Collections.shuffle(toOrder);
 		JSPUtil.sortTasks(toOrder, null, "desc");
 		assertEquals(3,toOrder.get(0).getId().getId());
+		
+		Collections.shuffle(toOrder);
+		JSPUtil.sortTasks(toOrder, "invalid", "asc");
+		assertEquals(1,toOrder.get(0).getId().getId());
 	}
 	
 	@Test
