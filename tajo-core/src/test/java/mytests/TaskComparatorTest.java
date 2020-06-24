@@ -4,6 +4,7 @@ import static org.junit.Assert.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.tajo.ExecutionBlockId;
@@ -91,6 +92,36 @@ public class TaskComparatorTest {
 			t = true;
 		}
 		assertTrue(t);
+	}
+	
+	@Test
+	//tasks = valid ; order = asc ; field = empty
+	// tasks = valid ; order = desc ; field = null
+	public void sortTaskInvalidField() {
+		toOrder.add(createTask(1,1,2));
+		toOrder.add(createTask(3,2,3));
+		toOrder.add(createTask(2,1,2));
+		JSPUtil.sortTasks(toOrder, "", "asc");
+		assertEquals(1,toOrder.get(0).getId().getId());
+		
+		Collections.shuffle(toOrder);
+		JSPUtil.sortTasks(toOrder, null, "desc");
+		assertEquals(3,toOrder.get(0).getId().getId());
+	}
+	
+	@Test
+	//tasks = valid ; order = asc ; field = host
+	//tasks = valid ; order = desc ; field = host
+	public void sortTaskHostTest() {
+		Task t1 = createTask(1,1,2);
+		Task t2 = createTask(2,2,3);
+		toOrder.add(t2);
+		toOrder.add(t1);
+		JSPUtil.sortTasks(toOrder, "host", "asc");
+		assertEquals(2,toOrder.get(0).getId().getId());
+		
+		JSPUtil.sortTasks(toOrder, "host", "desc");
+		assertEquals(2,toOrder.get(0).getId().getId());
 	}
 	
 	
