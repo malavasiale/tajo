@@ -195,10 +195,10 @@ public class TaskComparatorTest {
 		assertEquals(1,toOrder.get(0).getId().getId());
 		
 		toOrder.clear();
-		toOrder.add(createTask(1,0,2));
-		toOrder.add(createTask(2,1,2));
+		toOrder.add(createTask(1,1,2));
+		toOrder.add(createTask(2,0,2));
 		JSPUtil.sortTasks(toOrder, "runTime", "desc");
-		assertEquals(2,toOrder.get(0).getId().getId());
+		assertEquals(1,toOrder.get(0).getId().getId());
 	}
 	
 	@Test
