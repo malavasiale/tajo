@@ -76,6 +76,23 @@ public class TaskComparatorTest {
 		assertEquals(expected,toOrder.get(0).getId().getId());
 	}
 	
+	@Test
+	// tasks = empty ; order = desc ; field = id
+	// tasks = null ;  order = desc ; field = id
+	public void sortTaskIdInvalidTasks() {
+		JSPUtil.sortTasks(toOrder, "id", "desc");
+		assertEquals(0,toOrder.size());
+		
+		toOrder = null;
+		boolean t = false;
+		try {
+			JSPUtil.sortTasks(toOrder, "id", "desc");
+		} catch (NullPointerException e) {
+			t = true;
+		}
+		assertTrue(t);
+	}
+	
 	
 	
 	/*---------END TEST SORT TASK----------*/
