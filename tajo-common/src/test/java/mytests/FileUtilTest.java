@@ -29,13 +29,31 @@ public class FileUtilTest {
 	@Parameters({
 		"test.txt,prova", // path = valid ; textToWrite > 0
 		"test.txt,", // path = valid ; textToWrite = 0
-		"./newFolder/test.txt,prova" // path = noExisting ; textToWrite > 0
+		"./newFolder/test.txt,prova", // path = noExisting ; textToWrite > 0
+		"test.txt,0", // path = valid ; textToWrite = null
+		"0,prova" // path = null ; textToWrite > 0
 	})
 	public void writeAndReadTest(String path,String textToWrite) throws IOException {
-		Path filepath  = new Path(path);
-		FileUtil.writeTextToFile(textToWrite, filepath);
-		String read = FileUtil.readTextFile(new File(path));
-		assertEquals(textToWrite,read);
+		boolean t = false;
+		if(textToWrite.equals("0")) {
+			textToWrite = null;
+		}
+		if (path.equals("0")) {
+			path = null;
+		}
+		try {
+			Path filepath  = new Path(path);
+			FileUtil.writeTextToFile(textToWrite, filepath);
+			String read = FileUtil.readTextFile(new File(path));
+			assertEquals(textToWrite,read);
+		} catch(NullPointerException e) {
+			t = true;
+			assertTrue(t);
+		}catch (IllegalArgumentException e) {
+			t = true;
+			assertTrue(t);
+		}
+		
 	}
 	
 	@After
