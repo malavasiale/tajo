@@ -12,7 +12,10 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.fs.Path;
+import org.apache.log4j.Logger;
 import org.apache.tajo.util.FileUtil;
 import org.junit.After;
 import org.junit.Test;
@@ -110,6 +113,40 @@ public class FileUtilTest {
 				Mockito.verify(is).close();
 			}
 		}	
+	}
+	
+	/*
+	 * Logger log { valid ; null }
+	 * Closable c { valid ; null}
+	 * */
+	@Test
+	@Parameters({
+		"true,true", // log = valid ; c = valid
+		"true,false",
+		"false,true",
+		"false,false"
+	})
+	public void cleanupTest(boolean validLog,boolean validClosable) throws IOException {
+		boolean t = false;
+		Log log = null;
+		OutputStream os = null;
+		try {
+			if(validLog) {
+				log = LogFactory.getLog(FileUtilTest.class);
+			}
+			if(validClosable) {
+				os = new FileOutputStream("test.txt");
+			}
+			
+			os = Mockito.spy(os);
+			FileUtil.cleanup(log, os);
+			Mockito.verify(os).close();
+		}catch(NullPointerException e) {
+			t = true;
+			assertTrue(t);
+		} finally {
+			clearFile();
+		}
 	}
 	
 	
