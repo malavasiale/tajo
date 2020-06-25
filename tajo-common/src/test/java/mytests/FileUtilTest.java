@@ -122,9 +122,9 @@ public class FileUtilTest {
 	@Test
 	@Parameters({
 		"true,true", // log = valid ; c = valid
-		"true,false",
-		"false,true",
-		"false,false"
+		"true,false", // log = valid ; c = null
+		"false,true", // log = null ; c = valid
+		"false,false" // log = null ; c = null
 	})
 	public void cleanupTest(boolean validLog,boolean validClosable) throws IOException {
 		boolean t = false;
@@ -147,6 +147,20 @@ public class FileUtilTest {
 		} finally {
 			clearFile();
 		}
+	}
+	
+	@Test
+	public void cleanupDoubleCloseTest() throws IOException {
+		OutputStream os = new FileOutputStream("test.txt");
+		os = Mockito.spy(os);
+		os.close();
+		
+		//Try close alredy closed stream FOR COVERAGE
+		FileUtil.cleanup(null, os);
+		Mockito.verify(os,Mockito.times(2)).close();
+		
+		FileUtil.cleanup(LogFactory.getLog(FileUtilTest.class),os);
+		Mockito.verify(os,Mockito.times(3)).close();
 	}
 	
 	
