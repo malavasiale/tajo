@@ -67,10 +67,19 @@ public class FileUtilTest {
 	@Test
 	@Parameters({
 		"test.txt,prova", // path = valid ; textToWrite > 0
-		"./newFolder/test.txt,prova"
+		"./newFolder/test.txt,prova", //path = notExisting ; textToWrite > 0
+		"test.txt,", // path = valid ; textToWrite = 0
+		"0,prova", // path = null ; textToWrite > 0
+		"test.txt,0" // path = valid ; textToWrite = null
 	})
 	public void writeAndReadFromStream(String path,String textToWrite) throws IOException {
 		boolean t = false;
+		if(path.equals("0")) {
+			path = null;
+		}
+		if(textToWrite.equals("0")) {
+			textToWrite = null;
+		}
 		try {
 			File f = new File(path);
 			OutputStream os = new FileOutputStream(f);
@@ -79,6 +88,9 @@ public class FileUtilTest {
 			String output = FileUtil.readTextFromStream(is);
 			assertEquals(textToWrite,output);
 		}catch (FileNotFoundException e) {
+			t = true;
+			assertTrue(t);
+		} catch(NullPointerException e) {
 			t = true;
 			assertTrue(t);
 		}
