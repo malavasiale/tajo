@@ -244,6 +244,7 @@ public class FileUtilTest {
 		expected = expected.replace(".", ",");
 		String result  = FileUtil.humanReadableByteCount(bytes, si);
 		assertEquals(expected,result);
+		
 	}
 	
 	/*
