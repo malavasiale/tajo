@@ -12,6 +12,7 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.fs.Path;
@@ -29,6 +30,7 @@ import junitparams.Parameters;
 public class FileUtilTest {
 
 	/*
+	 * Test per lettura e scrittura su file
 	 * Category Partition
 	 * String path {valid, notExsisting, null}
 	 * String textToWrite {len > 0 ; len = 0 ; null}
@@ -66,6 +68,7 @@ public class FileUtilTest {
 	}
 	
 	/*
+	 * Test per lettura e scrittura su stream
 	 * Category Partition
 	 * Streams os / is : {valid,notExisting,null}
 	 * String textToWrite : {len > 0 ; len = 0 ; null}
@@ -116,6 +119,8 @@ public class FileUtilTest {
 	}
 	
 	/*
+	 * Test per verificare la chiusura di Closable. Ignora i fallimenti
+	 * Category partition :
 	 * Logger log { valid ; null }
 	 * Closable c { valid ; null}
 	 * */
@@ -150,6 +155,63 @@ public class FileUtilTest {
 		}
 	}
 	
+	/*
+	 * Test per verificare la chiusura di Closable. Notifica i fallimenti
+	 * Category partition :
+	 * Closable c { valid ; null}
+	 * */
+	@Test
+	@Parameters({
+		"true", // c = valid
+		"false" // c = null
+	})
+	public void cleanupAndThrowTest(boolean validClosable) throws IOException {
+		boolean t = false;
+		OutputStream os = null;
+		try {
+			if(validClosable) {
+				os = new FileOutputStream("test.txt");
+				os = Mockito.spy(os);
+				FileUtil.cleanupAndthrowIfFailed(os);
+				Mockito.verify(os).close();
+			} else if (!validClosable) {
+				FileUtil.cleanupAndthrowIfFailed(os);
+			}
+		}catch(NullPointerException e) {
+			t = true;
+			assertTrue(t);
+		} catch(IOException e) {
+			t = true;
+			assertTrue(t);
+		}
+		finally {
+			clearFile();
+		}
+	}
+	
+	/*
+	 * Test per verificare la chiusura di Closable che lancia IOException. Notifica fallimenti.
+	 * */
+	@Test
+	public void cleanupAndThrowExceptionTest() throws IOException {
+		boolean t = false;
+		OutputStream os = new FileOutputStream("test.txt");
+		os = Mockito.spy(os);
+		Mockito.doThrow(IOException.class).when(os).close();
+		
+		//Try close with IOexception throwing stream FOR COVERAGE
+		try {
+			FileUtil.cleanupAndthrowIfFailed(os);
+		}catch(IOException e) {
+			Mockito.verify(os).close();
+			t = true;
+		}
+		assertTrue(t);
+	}
+	
+	/*
+	 * Test per verificare la chiusura di Closable che lancia IOException. Ignora fallimenti.
+	 * */
 	@Test
 	public void cleanupExceptionCloseTest() throws IOException {
 		OutputStream os = new FileOutputStream("test.txt");
@@ -164,7 +226,29 @@ public class FileUtilTest {
 		Mockito.verify(os,Mockito.times(2)).close();
 	}
 	
+	/*
+	 * Test per verificare la corretta scrittura in linguaggio umano dei bytes
+	 * Category partition
+	 * long bytes : {< 0; = 0 ; 0 < bytes < 1000 ; >= 1000}
+	 * boolean si : {true ; false}
+	 * */
+	@Test
+	@Parameters({
+		"-1,true,-1 B", // bytes < 0 ; si = true
+		"0,true,0 B", // bytes = 0 ; si = true
+		"1,false,1 B", // 0 < bytes < 1000 ; si = false
+		"1000,true,1.0 kB", //bytes >=1000 ; si = true
+		"1000,false,1000 B" //bytes >=1000 ; si = false  SE "si" È FALSE RIMANE SCRITTO IN BYTES
+	})
+	public void humanReadableBytesTest(long bytes, boolean si, String expected) {
+		expected = expected.replace(".", ",");
+		String result  = FileUtil.humanReadableByteCount(bytes, si);
+		assertEquals(expected,result);
+	}
 	
+	/*
+	 * Utility in alcuni test per eliminazione dei file temporanei creati
+	 * */
 	public void clearFile() throws IOException {
 		try {
 			FileUtils.forceDelete(new File("test.txt"));
