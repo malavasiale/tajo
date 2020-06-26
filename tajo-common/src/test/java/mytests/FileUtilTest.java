@@ -136,11 +136,12 @@ public class FileUtilTest {
 			}
 			if(validClosable) {
 				os = new FileOutputStream("test.txt");
+				os = Mockito.spy(os);
+				FileUtil.cleanup(log, os);
+				Mockito.verify(os).close();
+			} else if (!validClosable) {
+				FileUtil.cleanup(log, os);
 			}
-			
-			os = Mockito.spy(os);
-			FileUtil.cleanup(log, os);
-			Mockito.verify(os).close();
 		}catch(NullPointerException e) {
 			t = true;
 			assertTrue(t);
@@ -150,17 +151,17 @@ public class FileUtilTest {
 	}
 	
 	@Test
-	public void cleanupDoubleCloseTest() throws IOException {
+	public void cleanupExceptionCloseTest() throws IOException {
 		OutputStream os = new FileOutputStream("test.txt");
 		os = Mockito.spy(os);
-		os.close();
+		Mockito.doThrow(IOException.class).when(os).close();
 		
-		//Try close alredy closed stream FOR COVERAGE
+		//Try close with IOexception throwing stream FOR COVERAGE
 		FileUtil.cleanup(null, os);
-		Mockito.verify(os,Mockito.times(2)).close();
+		Mockito.verify(os).close();
 		
 		FileUtil.cleanup(LogFactory.getLog(FileUtilTest.class),os);
-		Mockito.verify(os,Mockito.times(3)).close();
+		Mockito.verify(os,Mockito.times(2)).close();
 	}
 	
 	
