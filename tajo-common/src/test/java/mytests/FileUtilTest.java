@@ -241,9 +241,8 @@ public class FileUtilTest {
 		"1000,false,1000 B" //bytes >=1000 ; si = false  SE "si" È FALSE RIMANE SCRITTO IN BYTES
 	})
 	public void humanReadableBytesTest(long bytes, boolean si, String expected) {
-		expected = expected.replace(".", ",");
 		String result  = FileUtil.humanReadableByteCount(bytes, si);
-		assertEquals(expected,result);
+		assertEquals(expected,result.replace(",", "."));
 		
 	}
 	
