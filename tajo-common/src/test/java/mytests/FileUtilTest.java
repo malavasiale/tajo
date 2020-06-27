@@ -219,14 +219,21 @@ public class FileUtilTest {
 		os = Mockito.spy(os);
 		Mockito.doThrow(IOException.class).when(os).close();
 		
-		//Try close with IOexception throwing stream FOR COVERAGE
+		//Try close with IOexception throwing stream with null log FOR COVERAGE
 		FileUtil.cleanup(null, os);
 		Mockito.verify(os).close();
 		
+		//Try close with IOexception throwing stream with log without debug FOR COVERAGE
 		Log l = LogFactory.getLog(FileUtilTest.class);
-		Logger.getLogger(l.getClass()).setLevel(Level.DEBUG);
 		FileUtil.cleanup(l,os);
 		Mockito.verify(os,Mockito.times(2)).close();
+		
+		
+		//Try close with IOexception throwing stream with log with mocked debug FOR COVERAGE
+		l = Mockito.spy(l);
+		Mockito.when(l.isDebugEnabled()).thenReturn(true);
+		FileUtil.cleanup(l,os);
+		Mockito.verify(os,Mockito.times(3)).close();
 	}
 	
 	/*
