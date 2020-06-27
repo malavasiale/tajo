@@ -16,6 +16,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.fs.Path;
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.apache.tajo.util.FileUtil;
 import org.junit.After;
@@ -222,7 +223,9 @@ public class FileUtilTest {
 		FileUtil.cleanup(null, os);
 		Mockito.verify(os).close();
 		
-		FileUtil.cleanup(LogFactory.getLog(FileUtilTest.class),os);
+		Log l = LogFactory.getLog(FileUtilTest.class);
+		Logger.getLogger(l.getClass()).setLevel(Level.DEBUG);
+		FileUtil.cleanup(l,os);
 		Mockito.verify(os,Mockito.times(2)).close();
 	}
 	
