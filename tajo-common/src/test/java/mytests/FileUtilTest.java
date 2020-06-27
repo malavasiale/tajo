@@ -241,7 +241,8 @@ public class FileUtilTest {
 		"0,true,0 B", // bytes = 0 ; si = true
 		"1,false,1 B", // 0 < bytes < 1000 ; si = false
 		"1000,true,1.0 kB", //bytes >=1000 ; si = true
-		"1000,false,1000 B" //bytes >=1000 ; si = false  SE "si" È FALSE RIMANE SCRITTO IN BYTES
+		"1000,false,1000 B", //bytes >=1000 ; si = false  SE "si" È FALSE RIMANE SCRITTO IN BYTES FOR COVERAGE
+		"1,true,1 B" // bytes > 0 ;si = true FOR COVERAGE
 	})
 	public void humanReadableBytesTest(long bytes, boolean si, String expected) {
 		String result  = FileUtil.humanReadableByteCount(bytes, si);
