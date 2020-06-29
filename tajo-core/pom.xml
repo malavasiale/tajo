@@ -48,6 +48,19 @@
 
   <build>
     <plugins>
+    <plugin>
+    	<groupId>org.pitest</groupId>
+    	<artifactId>pitest-maven</artifactId>
+    	<version>1.5.2</version>
+    	<configuration>
+        	<targetClasses>
+           	 <param>org.apache.tajo.util.JSPUtil*</param>
+        	</targetClasses>
+        	<targetTests>
+            	 <param>mytests.TaskComparatorTest</param>
+        	</targetTests>
+    		</configuration>
+	</plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
@@ -163,25 +176,11 @@
 
 
   <dependencies>
-  	 <!-- https://mvnrepository.com/artifact/junit/junit -->
-  	<dependency>
-		<groupId>pl.pragmatists</groupId>
-		<artifactId>JUnitParams</artifactId>
-		<version>1.0.0</version>
-	</dependency>
-	<!-- https://mvnrepository.com/artifact/org.mockito/mockito-all -->
-	<dependency>
-    	<groupId>org.mockito</groupId>
-    	<artifactId>mockito-all</artifactId>
-    	<version>1.10.19</version>
-    	<scope>test</scope>
-	</dependency>
-<!-- Thanks for using https://jar-download.com -->
-	<dependency>
-  		<groupId>junit</groupId>
-  		<artifactId>junit</artifactId>
-  		<version>4.13</version>
-	</dependency>
+  <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-core</artifactId>
+      <scope>test</scope>
+    </dependency>
 	
     <dependency>
       <groupId>org.apache.tajo</groupId>

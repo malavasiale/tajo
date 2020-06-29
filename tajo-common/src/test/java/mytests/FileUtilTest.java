@@ -2,27 +2,26 @@ package mytests;
 
 import static org.junit.Assert.*;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.PrintWriter;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.fs.Path;
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
+import org.apache.hadoop.io.IOUtils;
 import org.apache.tajo.util.FileUtil;
-import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
+import org.powermock.api.mockito.PowerMockito;
 
 import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
@@ -52,10 +51,11 @@ public class FileUtilTest {
 		if (path.equals("0")) {
 			path = null;
 		}
-		try {
+		try {			
 			Path filepath  = new Path(path);
+			File f = new File(path);
 			FileUtil.writeTextToFile(textToWrite, filepath);
-			String read = FileUtil.readTextFile(new File(path));
+			String read = FileUtil.readTextFile(f);
 			assertEquals(textToWrite,read);
 		} catch(NullPointerException e) {
 			t = true;
@@ -260,7 +260,7 @@ public class FileUtilTest {
 	/*
 	 * Utility in alcuni test per eliminazione dei file temporanei creati
 	 * */
-	public void clearFile() throws IOException {
+	public static void clearFile() throws IOException {
 		try {
 			FileUtils.forceDelete(new File("test.txt"));
 		} catch(Exception e) {}
