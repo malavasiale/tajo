@@ -57,7 +57,7 @@ public class FileUtilMutationKillTest {
 
 			PowerMockito.verifyStatic();
 			IOUtils.cleanup(Mockito.isNull(Log.class), Mockito.any(BufferedReader.class));
-	
+			FileUtilTest.clearFile();
 	}
 
 }

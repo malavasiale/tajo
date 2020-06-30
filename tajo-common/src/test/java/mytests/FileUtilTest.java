@@ -15,8 +15,11 @@ import java.io.OutputStream;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.hadoop.fs.FSDataOutputStream;
+import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.IOUtils;
+import org.apache.tajo.conf.TajoConf;
 import org.apache.tajo.util.FileUtil;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -34,6 +37,11 @@ public class FileUtilTest {
 	 * Category Partition
 	 * String path {valid, notExsisting, null}
 	 * String textToWrite {len > 0 ; len = 0 ; null}
+	 * 
+	 * MUTATION 62 : Non può essere uccisa in quanto equivalente al SUT. Infatii la chiamata !fs.exists(path.getParent())
+	 * 				 venendo negata non genera alcun problema in quanto non viene creata immediatamente la cartella con il relativo
+	 * 				 path in cui scrivere ma viene creata dopo dalla chiamata FSDataOutputStream out = fs.create(path);
+	 * 				 Producono quindi lo stesso output ma seguendo flussi diversi : STRONG MUTATION
 	 * */
 	@Test
 	@Parameters({
@@ -45,13 +53,14 @@ public class FileUtilTest {
 	})
 	public void writeAndReadTest(String path,String textToWrite) throws IOException {
 		boolean t = false;
+		
 		if(textToWrite.equals("0")) {
 			textToWrite = null;
 		}
 		if (path.equals("0")) {
 			path = null;
 		}
-		try {			
+		try {
 			Path filepath  = new Path(path);
 			File f = new File(path);
 			FileUtil.writeTextToFile(textToWrite, filepath);
@@ -80,7 +89,7 @@ public class FileUtilTest {
 		"./newFolder/test.txt,prova", // stream = notExisting ; textToWrite > 0
 		"test.txt,", // stream = valid ; textToWrite = 0
 		"0,prova", // stream = null ; textToWrite > 0
-		"test.txt,0" // stream = valid ; textToWrite = null
+		"test.txt,0", // stream = valid ; textToWrite = null
 	})
 	public void writeAndReadFromStream(String path,String textToWrite) throws IOException {
 		boolean t = false;

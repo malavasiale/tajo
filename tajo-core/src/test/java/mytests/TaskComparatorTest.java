@@ -18,7 +18,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
-import org.mockito.Spy;
 
 import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
@@ -27,7 +26,12 @@ import org.apache.hadoop.conf.Configuration;
 import org.apache.tajo.querymaster.Task;
 
 
-
+/*
+ * MUTATION 209 & MUTATION 218 : non possono essere uccise in quanto equivalenti al SUT. In entrambe viene sostituito
+ * il valore di ritorno 1 con 0. La classe Collections.sort() però utilizza il valore del comparatore passatogli
+ * verificando se il suo valore è >=0 oppure <0. Quindi passandogli 0 invece che 1 segue esattamente lo stesso flusso 
+ * di esecuzione dando lo stesso risultato. ----> WEAK MUTATION
+ * */
 @RunWith(JUnitParamsRunner.class)
 public class TaskComparatorTest {
 	
